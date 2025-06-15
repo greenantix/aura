@@ -16,6 +16,20 @@ env/
 # Distribution / packaging
 build/
 dist/
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+
+# TypeScript build
+*.tsbuildinfo
+
+# Build output
+out/
+
+# Local environment files
+.env
+.env.local
+.env.*.local
 *.egg-info/
 
 # Misc
