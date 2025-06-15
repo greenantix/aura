@@ -1,0 +1,13 @@
+# Performance-Only Overrides
+
+performance:
+  # Lower timeout for strict performance testing
+  timeout: 10
+  # Always verify SSL for performance modules
+  verify_ssl: true
+
+# Module-specific settings
+performance_manager:
+  max_concurrent_analysis: 5
+  rate_limits:
+    analysis: 50

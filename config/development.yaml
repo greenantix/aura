@@ -1,0 +1,17 @@
+# Development Configuration Overrides
+
+core:
+  log_level: DEBUG
+
+performance:
+  timeout: 60
+  verify_ssl: false
+
+intelligence:
+  python_analyzer:
+    enabled: true
+
+security:
+  verify_ssl: false
+  max_memory_mb: 1024
+  max_cpu_percent: 90

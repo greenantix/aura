@@ -1,0 +1,17 @@
+# Default Aura Configuration
+
+core:
+  log_level: INFO
+
+performance:
+  timeout: 30
+  verify_ssl: true
+
+intelligence:
+  python_analyzer:
+    enabled: true
+
+security:
+  verify_ssl: true
+  max_memory_mb: 2048
+  max_cpu_percent: 80
