@@ -158,11 +158,26 @@ class AuraDashboardProvider {
             command: 'aura.askQuestion',
             title: 'Ask Aura a Question'
         }, new vscode.ThemeIcon('comment-discussion'), undefined, 'Ask Aura a question about your code'));
+        // Generate Tests
+        items.push(new AuraDashboardItem('Generate Tests', vscode.TreeItemCollapsibleState.None, {
+            command: 'aura.generateTests',
+            title: 'Generate Unit Tests'
+        }, new vscode.ThemeIcon('beaker'), undefined, 'Generate unit tests for current file'));
+        // Optimize Code
+        items.push(new AuraDashboardItem('Optimize Code', vscode.TreeItemCollapsibleState.None, {
+            command: 'aura.optimizeCode',
+            title: 'Optimize Current Code'
+        }, new vscode.ThemeIcon('rocket'), undefined, 'Get AI-powered code optimization suggestions'));
         // Toggle Auto-Analysis
         items.push(new AuraDashboardItem('Auto-Analysis', vscode.TreeItemCollapsibleState.None, {
             command: 'aura.toggleAutoAnalysis',
             title: 'Toggle Auto-Analysis'
         }, new vscode.ThemeIcon('settings-gear'), undefined, 'Toggle automatic code analysis on save'));
+        // Settings
+        items.push(new AuraDashboardItem('Settings', vscode.TreeItemCollapsibleState.None, {
+            command: 'aura.showSettings',
+            title: 'Open Aura Settings'
+        }, new vscode.ThemeIcon('gear'), undefined, 'Configure Aura extension settings'));
         return items;
     }
 }

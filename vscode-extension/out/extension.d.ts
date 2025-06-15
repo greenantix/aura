@@ -50,6 +50,15 @@ export declare class AuraExtension {
     private mapSeverity;
     private updateComponents;
     activate(): Promise<void>;
+    private checkLLMStatus;
+    private showIssues;
+    private generateTests;
+    private optimizeCode;
+    private reconnectToBackend;
+    private showTroubleshootingPanel;
+    private getTroubleshootingHtml;
+    private startBackendService;
+    private testBackendConnection;
     deactivate(): void;
 }
 export declare function activate(context: vscode.ExtensionContext): Promise<void>;

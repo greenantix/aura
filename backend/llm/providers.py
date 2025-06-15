@@ -21,7 +21,14 @@ from typing import Dict, Any, Optional, List, Union
 from enum import Enum
 import uuid
 
-from ..core import AuraModule, MessageType, aura_service, aura_singleton
+try:
+    from ..core import AuraModule, MessageType, aura_service, aura_singleton
+except ImportError:
+    # Fallback for direct execution
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parent.parent))
+    from core import AuraModule, MessageType, aura_service, aura_singleton
 
 
 class ModelCapability(Enum):

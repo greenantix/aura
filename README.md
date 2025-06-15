@@ -85,30 +85,51 @@ aura_unified/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.8+
-- Node.js 16+ (for VS Code extension development)
-- LM Studio or Ollama for LLM functionality
+- **Python 3.8+** with pip
+- **VS Code 1.74.0+**  
+- **ZeroMQ**: `pip install pyzmq`
+- **LM Studio or Ollama** for LLM functionality (optional)
 
 ### Installation
 
 1. **Install Python Dependencies**
    ```bash
-   cd aura_unified/backend
+   cd backend
    pip install -r requirements.txt
+   pip install pyzmq  # Critical for VS Code integration
    ```
 
 2. **Install VS Code Extension**
    ```bash
-   code --install-extension aura_unified/vscode-extension/aura-autonomous-assistant-1.0.0.vsix
+   cd vscode-extension
+   code --install-extension aura-autonomous-assistant-1.0.0.vsix
    ```
 
-3. **Start Aura System**
+3. **Start Backend Service for VS Code**
    ```bash
-   cd aura_unified/backend
-   python aura_main.py
+   # Easy launcher (recommended)
+   python3 start_aura_for_vscode.py
+   
+   # Manual start
+   cd backend
+   python3 vscode_backend_service.py
+   ```
+
+4. **Verify Integration**
+   ```bash
+   # Test the connection
+   python3 test_vscode_integration.py
    ```
 
 ### Basic Usage
+
+**VS Code Extension (Recommended):**
+| Command | Shortcut | Description |
+|---------|----------|-------------|
+| **Analyze Current File** | `Ctrl+Alt+A` | Deep code analysis with metrics |
+| **Ask Aura** | `Ctrl+Alt+Q` | AI chat with code context |
+| **Generate Semantic Commit** | `Ctrl+Alt+C` | Smart git commits |
+| **Show Dashboard** | - | Project metrics and system status |
 
 **Command Line Interface:**
 ```bash
@@ -122,11 +143,31 @@ python -m cli.aura_cli analyze /path/to/file.py
 python -m cli.aura_cli ask "How can I optimize this function?"
 ```
 
-**VS Code Extension:**
-- **Automatic Analysis**: Save any code file for instant analysis
-- **Ask Questions**: Use `Ctrl+Alt+Q` to ask Aura about your code
-- **Generate Commits**: Use `Ctrl+Alt+C` for AI-generated semantic commits
-- **View Dashboard**: Check the Aura activity bar for system status
+### VS Code Integration Features
+
+**Real-time Intelligence:**
+- 🔍 **Live Code Analysis** - Automatic analysis on file save
+- ⚡ **VS Code Diagnostics** - Issues appear in Problems panel  
+- 📊 **Metrics Dashboard** - Complexity, coverage, maintainability
+- 💡 **Smart Suggestions** - Context-aware improvement recommendations
+
+**AI Assistant:**
+- 💬 **Context-Aware Chat** - Understands your current code
+- 🧠 **Code Explanations** - Intelligent documentation
+- 🎯 **Problem Solving** - Algorithm and architecture guidance
+- 🔧 **Debugging Help** - Error analysis and solutions
+
+**Git Integration:**
+- 📝 **Semantic Commits** - Conventional Commits with AI analysis
+- 🌿 **Smart Branch Names** - Intelligent branch suggestions
+- 🔀 **Change Analysis** - Impact assessment and breaking changes
+- 📈 **Commit History** - Pattern analysis and insights
+
+**Developer Experience:**
+- 🎨 **Custom Icon Theme** - Beautiful file type recognition
+- ⚙️ **Flexible Configuration** - Customizable analysis depth
+- 🚨 **Professional Notifications** - Non-intrusive status updates
+- 🔧 **Troubleshooting Panel** - Built-in diagnostics and help
 
 ## 🏗️ Architecture Overview
 
@@ -184,14 +225,80 @@ This unified structure eliminates the previous chaos:
 
 ## 🔧 Configuration
 
-### LLM Providers
-```bash
-# LM Studio (default: http://localhost:1234)
-# Ollama (default: http://localhost:11434)
+### VS Code Extension Settings
+
+Access via `Ctrl+,` → Search "Aura":
+
+```json
+{
+  "aura.autoAnalysis": true,
+  "aura.serverUrl": "tcp://localhost:5559",
+  "aura.llmProvider": "lm_studio",
+  "aura.analysisDepth": "detailed",
+  "aura.showNotifications": true,
+  "aura.themeColor": "purple",
+  "aura.backendPath": "../backend"
+}
 ```
+
+### LLM Providers
+
+**LM Studio (Recommended):**
+1. Download [LM Studio](https://lmstudio.ai/)
+2. Load a coding model (CodeLlama, DeepSeek Coder)
+3. Start local server on `localhost:1234`
+
+**Ollama:**
+1. Install [Ollama](https://ollama.ai/)
+2. Pull a model: `ollama pull codellama`
+3. Set `aura.llmProvider` to `"ollama"`
 
 ### System Configuration
 See `config/default.yaml` for complete configuration options.
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**Extension shows "disconnected":**
+```bash
+# 1. Start the backend service
+python3 start_aura_for_vscode.py
+
+# 2. Test connection
+python3 test_vscode_integration.py
+
+# 3. Check ZeroMQ installation
+pip install pyzmq
+```
+
+**Analysis not working:**
+```bash
+# 1. Verify supported file type (Python, JS, TS)
+# 2. Check console for errors (Ctrl+Shift+I)
+# 3. Run debug mode
+python3 start_aura_for_vscode.py --debug
+```
+
+**LLM features unavailable:**
+```bash
+# 1. Start LM Studio or Ollama
+# 2. Check provider setting in VS Code
+# 3. Test LLM health in Dashboard panel
+```
+
+### Debug Commands
+
+```bash
+# Check dependencies
+python3 start_aura_for_vscode.py --check-only
+
+# Verbose logging
+python3 start_aura_for_vscode.py --debug
+
+# Test all integration points
+python3 test_vscode_integration.py --verbose
+```
 
 ## 📚 Documentation
 

@@ -40,13 +40,15 @@ class AuraNotificationManager {
         this.enabled = enabled;
     }
     showInfo(message, ...actions) {
-        if (!this.enabled)
+        if (!this.enabled) {
             return Promise.resolve(undefined);
+        }
         return vscode.window.showInformationMessage(`🤖 Aura: ${message}`, ...actions);
     }
     showWarning(message, ...actions) {
-        if (!this.enabled)
+        if (!this.enabled) {
             return Promise.resolve(undefined);
+        }
         return vscode.window.showWarningMessage(`⚠️ Aura: ${message}`, ...actions);
     }
     showError(message, ...actions) {
@@ -60,8 +62,9 @@ class AuraNotificationManager {
         }, task);
     }
     async showAnalysisComplete(fileName, elementsFound, issuesFound) {
-        if (!this.enabled)
+        if (!this.enabled) {
             return;
+        }
         const message = `Analysis complete for ${fileName}: ${elementsFound} elements, ${issuesFound} issues found`;
         if (issuesFound > 0) {
             const action = await this.showWarning(message, 'View Issues', 'Dismiss');
@@ -76,7 +79,7 @@ class AuraNotificationManager {
     async showCommitGenerated(commitMessage) {
         const action = await this.showInfo('Semantic commit message generated', 'View & Edit', 'Auto-Commit', 'Dismiss');
         switch (action) {
-            case 'View & Edit':
+            case 'View & Edit': {
                 const edited = await vscode.window.showInputBox({
                     prompt: 'Review and edit commit message',
                     value: commitMessage,
@@ -87,6 +90,7 @@ class AuraNotificationManager {
                     return true;
                 }
                 break;
+            }
             case 'Auto-Commit':
                 await this.executeCommit(commitMessage);
                 return true;
@@ -106,7 +110,7 @@ class AuraNotificationManager {
                     this.showInfo('Connected and ready to assist');
                 }
                 break;
-            case 'disconnected':
+            case 'disconnected': {
                 const reconnectAction = await this.showWarning('Disconnected from Aura system', 'Reconnect', 'Check Settings');
                 if (reconnectAction === 'Reconnect') {
                     vscode.commands.executeCommand('aura.reconnect');
@@ -115,7 +119,8 @@ class AuraNotificationManager {
                     vscode.commands.executeCommand('workbench.action.openSettings', 'aura');
                 }
                 break;
-            case 'error':
+            }
+            case 'error': {
                 const troubleshootAction = await this.showError('Connection error - please check Aura system status', 'Troubleshoot', 'Settings');
                 if (troubleshootAction === 'Troubleshoot') {
                     vscode.commands.executeCommand('aura.showTroubleshooting');
@@ -124,6 +129,7 @@ class AuraNotificationManager {
                     vscode.commands.executeCommand('workbench.action.openSettings', 'aura');
                 }
                 break;
+            }
         }
     }
     async showFirstTimeWelcome() {
@@ -142,8 +148,9 @@ class AuraNotificationManager {
         }
     }
     async showQuickSuggestion(message, primaryAction, command) {
-        if (!this.enabled)
+        if (!this.enabled) {
             return;
+        }
         const action = await vscode.window.showInformationMessage(`💡 Aura suggests: ${message}`, primaryAction, 'Later');
         if (action === primaryAction) {
             vscode.commands.executeCommand(command);

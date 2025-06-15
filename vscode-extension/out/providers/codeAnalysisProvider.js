@@ -129,14 +129,16 @@ class AuraCodeAnalysisProvider {
         return items;
     }
     getCodeElementItems() {
-        if (!this.fileAnalysis)
+        if (!this.fileAnalysis) {
             return [];
+        }
         const items = [];
         const elements = this.fileAnalysis.elements;
         // Group elements by type
         const elementsByType = elements.reduce((acc, element) => {
-            if (!acc[element.type])
+            if (!acc[element.type]) {
                 acc[element.type] = [];
+            }
             acc[element.type].push(element);
             return acc;
         }, {});
@@ -158,8 +160,9 @@ class AuraCodeAnalysisProvider {
         return items;
     }
     getIssueItems() {
-        if (!this.fileAnalysis)
+        if (!this.fileAnalysis) {
             return [];
+        }
         const items = [];
         this.fileAnalysis.issues.forEach(issue => {
             const severityIcon = this.getIconForSeverity(issue.severity);
@@ -175,8 +178,9 @@ class AuraCodeAnalysisProvider {
         return items;
     }
     getMetricItems() {
-        if (!this.fileAnalysis)
+        if (!this.fileAnalysis) {
             return [];
+        }
         const items = [];
         const metrics = this.fileAnalysis.metrics;
         items.push(new CodeAnalysisItem('Lines of Code', vscode.TreeItemCollapsibleState.None, undefined, new vscode.ThemeIcon('file-text'), metrics.lines_of_code.toString(), `${metrics.lines_of_code} lines of code`));

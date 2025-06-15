@@ -1,8 +1,0 @@
-{
-  "aura.autoAnalysis": true,
-  "aura.serverUrl": "tcp://localhost:5559",
-  "aura.llmProvider": "lm_studio",
-  "aura.analysisDepth": "detailed",
-  "aura.showNotifications": true,
-  "aura.themeColor": "purple"
-}

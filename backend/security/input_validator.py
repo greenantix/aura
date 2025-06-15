@@ -69,3 +69,21 @@ class SecurityValidator:
             if phrase in lower_prompt:
                 raise SecurityError("Potential prompt injection detected")
         return prompt
+
+    def validate_input(self, data: str, input_type: str = 'general') -> bool:
+        """General input validation"""
+        try:
+            if input_type == 'code':
+                self.sanitize_code_input(data)
+            elif input_type == 'prompt':
+                self.validate_llm_prompt(data)
+            elif input_type == 'filepath':
+                self.validate_file_path(data)
+            return True
+        except SecurityError:
+            return False
+
+
+def validate_code_input(code: str, max_length: int = 100000) -> str:
+    """Convenience function for code validation"""
+    return SecurityValidator.sanitize_code_input(code, max_length)

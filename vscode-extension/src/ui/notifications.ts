@@ -20,12 +20,12 @@ export class AuraNotificationManager {
     }
 
     public showInfo(message: string, ...actions: string[]): Thenable<string | undefined> {
-        if (!this.enabled) return Promise.resolve(undefined);
+        if (!this.enabled) {return Promise.resolve(undefined);}
         return vscode.window.showInformationMessage(`🤖 Aura: ${message}`, ...actions);
     }
 
     public showWarning(message: string, ...actions: string[]): Thenable<string | undefined> {
-        if (!this.enabled) return Promise.resolve(undefined);
+        if (!this.enabled) {return Promise.resolve(undefined);}
         return vscode.window.showWarningMessage(`⚠️ Aura: ${message}`, ...actions);
     }
 
@@ -52,7 +52,7 @@ export class AuraNotificationManager {
         elementsFound: number,
         issuesFound: number
     ): Promise<void> {
-        if (!this.enabled) return;
+        if (!this.enabled) {return;}
 
         const message = `Analysis complete for ${fileName}: ${elementsFound} elements, ${issuesFound} issues found`;
         
@@ -75,7 +75,7 @@ export class AuraNotificationManager {
         );
 
         switch (action) {
-            case 'View & Edit':
+            case 'View & Edit': {
                 const edited = await vscode.window.showInputBox({
                     prompt: 'Review and edit commit message',
                     value: commitMessage,
@@ -86,6 +86,7 @@ export class AuraNotificationManager {
                     return true;
                 }
                 break;
+            }
             case 'Auto-Commit':
                 await this.executeCommit(commitMessage);
                 return true;
@@ -108,7 +109,7 @@ export class AuraNotificationManager {
                     this.showInfo('Connected and ready to assist');
                 }
                 break;
-            case 'disconnected':
+            case 'disconnected': {
                 const reconnectAction = await this.showWarning(
                     'Disconnected from Aura system',
                     'Reconnect',
@@ -120,7 +121,8 @@ export class AuraNotificationManager {
                     vscode.commands.executeCommand('workbench.action.openSettings', 'aura');
                 }
                 break;
-            case 'error':
+            }
+            case 'error': {
                 const troubleshootAction = await this.showError(
                     'Connection error - please check Aura system status',
                     'Troubleshoot',
@@ -132,6 +134,7 @@ export class AuraNotificationManager {
                     vscode.commands.executeCommand('workbench.action.openSettings', 'aura');
                 }
                 break;
+            }
         }
     }
 
@@ -162,7 +165,7 @@ export class AuraNotificationManager {
         primaryAction: string,
         command: string
     ): Promise<void> {
-        if (!this.enabled) return;
+        if (!this.enabled) {return;}
 
         const action = await vscode.window.showInformationMessage(
             `💡 Aura suggests: ${message}`,

@@ -1,0 +1,220 @@
+{
+  "iconDefinitions": {
+    "_folder": {
+      "iconPath": "./default_folder.svg"
+    },
+    "_folder_open": {
+      "iconPath": "./default_folder_open.svg"
+    },
+    "_file": {
+      "iconPath": "./default_file.svg"
+    },
+    "_file_python": {
+      "iconPath": "./python.svg",
+      "fontCharacter": "\\E73C",
+      "fontColor": "#306998",
+      "fontSize": "140%"
+    },
+    "_file_javascript": {
+      "iconPath": "./javascript.svg",
+      "fontCharacter": "\\E781",
+      "fontColor": "#f7df1e",
+      "fontSize": "140%"
+    },
+    "_file_typescript": {
+      "iconPath": "./typescript.svg",
+      "fontCharacter": "\\E628",
+      "fontColor": "#007acc",
+      "fontSize": "140%"
+    },
+    "_file_json": {
+      "iconPath": "./json.svg",
+      "fontCharacter": "\\E60B",
+      "fontColor": "#e8b22b",
+      "fontSize": "120%"
+    },
+    "_file_markdown": {
+      "iconPath": "./markdown.svg",
+      "fontCharacter": "\\E73E",
+      "fontColor": "#519aba",
+      "fontSize": "120%"
+    },
+    "_file_git": {
+      "iconPath": "./git.svg",
+      "fontCharacter": "\\E702",
+      "fontColor": "#f14e32",
+      "fontSize": "120%"
+    },
+    "_file_config": {
+      "iconPath": "./settings.svg",
+      "fontCharacter": "\\E713",
+      "fontColor": "#6d8086",
+      "fontSize": "120%"
+    },
+    "_file_test": {
+      "iconPath": "./test.svg",
+      "fontCharacter": "\\E756",
+      "fontColor": "#73ba25",
+      "fontSize": "120%"
+    },
+    "_file_aura": {
+      "iconPath": "./aura.svg",
+      "fontCharacter": "\\E7C4",
+      "fontColor": "#9f7aea",
+      "fontSize": "140%"
+    }
+  },
+  "folderNames": {
+    "backend": "_folder",
+    "frontend": "_folder",
+    "vscode-extension": "_folder",
+    "src": "_folder",
+    "dist": "_folder",
+    "build": "_folder",
+    "node_modules": "_folder",
+    "__pycache__": "_folder",
+    ".git": "_folder",
+    ".vscode": "_folder",
+    "test": "_folder",
+    "tests": "_folder",
+    "docs": "_folder",
+    "intelligence": "_folder",
+    "generation": "_folder",
+    "planning": "_folder",
+    "performance": "_folder",
+    "security": "_folder"
+  },
+  "folderNamesExpanded": {
+    "backend": "_folder_open",
+    "frontend": "_folder_open",
+    "vscode-extension": "_folder_open",
+    "src": "_folder_open",
+    "dist": "_folder_open",
+    "build": "_folder_open",
+    "node_modules": "_folder_open",
+    "__pycache__": "_folder_open",
+    ".git": "_folder_open",
+    ".vscode": "_folder_open",
+    "test": "_folder_open",
+    "tests": "_folder_open",
+    "docs": "_folder_open",
+    "intelligence": "_folder_open",
+    "generation": "_folder_open",
+    "planning": "_folder_open",
+    "performance": "_folder_open",
+    "security": "_folder_open"
+  },
+  "fileExtensions": {
+    "py": "_file_python",
+    "js": "_file_javascript",
+    "jsx": "_file_javascript",
+    "ts": "_file_typescript",
+    "tsx": "_file_typescript",
+    "json": "_file_json",
+    "md": "_file_markdown",
+    "yml": "_file_config",
+    "yaml": "_file_config",
+    "toml": "_file_config",
+    "ini": "_file_config",
+    "cfg": "_file_config",
+    "conf": "_file_config",
+    "gitignore": "_file_git",
+    "gitattributes": "_file_git"
+  },
+  "fileNames": {
+    ".gitignore": "_file_git",
+    ".gitattributes": "_file_git",
+    "package.json": "_file_json",
+    "package-lock.json": "_file_json",
+    "tsconfig.json": "_file_json",
+    "pyproject.toml": "_file_config",
+    "requirements.txt": "_file_config",
+    "Dockerfile": "_file_config",
+    "docker-compose.yml": "_file_config",
+    "README.md": "_file_markdown",
+    "CHANGELOG.md": "_file_markdown",
+    "LICENSE": "_file_markdown",
+    "test.py": "_file_test",
+    "test_*.py": "_file_test",
+    "*_test.py": "_file_test",
+    "*.test.js": "_file_test",
+    "*.test.ts": "_file_test",
+    "*.spec.js": "_file_test",
+    "*.spec.ts": "_file_test",
+    "aura.py": "_file_aura",
+    "aura_*.py": "_file_aura"
+  },
+  "languageIds": {
+    "python": "_file_python",
+    "javascript": "_file_javascript",
+    "typescript": "_file_typescript",
+    "json": "_file_json",
+    "jsonc": "_file_json",
+    "markdown": "_file_markdown",
+    "yaml": "_file_config",
+    "toml": "_file_config",
+    "ini": "_file_config"
+  },
+  "light": {
+    "iconDefinitions": {
+      "_file_python": {
+        "fontColor": "#306998"
+      },
+      "_file_javascript": {
+        "fontColor": "#f7df1e"
+      },
+      "_file_typescript": {
+        "fontColor": "#007acc"
+      },
+      "_file_json": {
+        "fontColor": "#e8b22b"
+      },
+      "_file_markdown": {
+        "fontColor": "#519aba"
+      },
+      "_file_git": {
+        "fontColor": "#f14e32"
+      },
+      "_file_config": {
+        "fontColor": "#6d8086"
+      },
+      "_file_test": {
+        "fontColor": "#73ba25"
+      },
+      "_file_aura": {
+        "fontColor": "#805ad5"
+      }
+    }
+  },
+  "highContrast": {
+    "iconDefinitions": {
+      "_file_python": {
+        "fontColor": "#ffffff"
+      },
+      "_file_javascript": {
+        "fontColor": "#ffffff"
+      },
+      "_file_typescript": {
+        "fontColor": "#ffffff"
+      },
+      "_file_json": {
+        "fontColor": "#ffffff"
+      },
+      "_file_markdown": {
+        "fontColor": "#ffffff"
+      },
+      "_file_git": {
+        "fontColor": "#ffffff"
+      },
+      "_file_config": {
+        "fontColor": "#ffffff"
+      },
+      "_file_test": {
+        "fontColor": "#ffffff"
+      },
+      "_file_aura": {
+        "fontColor": "#ffffff"
+      }
+    }
+  }
+}

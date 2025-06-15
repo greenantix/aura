@@ -193,14 +193,14 @@ export class AuraCodeAnalysisProvider implements vscode.TreeDataProvider<CodeAna
     }
 
     private getCodeElementItems(): CodeAnalysisItem[] {
-        if (!this.fileAnalysis) return [];
+        if (!this.fileAnalysis) {return [];}
 
         const items: CodeAnalysisItem[] = [];
         const elements = this.fileAnalysis.elements;
 
         // Group elements by type
         const elementsByType = elements.reduce((acc, element) => {
-            if (!acc[element.type]) acc[element.type] = [];
+            if (!acc[element.type]) {acc[element.type] = [];}
             acc[element.type].push(element);
             return acc;
         }, {} as Record<string, any[]>);
@@ -234,7 +234,7 @@ export class AuraCodeAnalysisProvider implements vscode.TreeDataProvider<CodeAna
     }
 
     private getIssueItems(): CodeAnalysisItem[] {
-        if (!this.fileAnalysis) return [];
+        if (!this.fileAnalysis) {return [];}
 
         const items: CodeAnalysisItem[] = [];
         
@@ -262,7 +262,7 @@ export class AuraCodeAnalysisProvider implements vscode.TreeDataProvider<CodeAna
     }
 
     private getMetricItems(): CodeAnalysisItem[] {
-        if (!this.fileAnalysis) return [];
+        if (!this.fileAnalysis) {return [];}
 
         const items: CodeAnalysisItem[] = [];
         const metrics = this.fileAnalysis.metrics;

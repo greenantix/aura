@@ -84,23 +84,19 @@
       "aura-container": [
         {
           "id": "aura.dashboard",
-          "name": "Dashboard",
-          "when": "aura.enabled"
+          "name": "Dashboard"
         },
         {
           "id": "aura.codeAnalysis",
-          "name": "Code Analysis",
-          "when": "aura.enabled"
+          "name": "Code Analysis"
         },
         {
           "id": "aura.suggestions",
-          "name": "Suggestions",
-          "when": "aura.enabled"
+          "name": "Suggestions"
         },
         {
           "id": "aura.chat",
-          "name": "Chat with Aura",
-          "when": "aura.enabled"
+          "name": "Chat with Aura"
         }
       ]
     },
@@ -160,6 +156,11 @@
           ],
           "default": "purple",
           "description": "Aura theme color"
+        },
+        "aura.backendPath": {
+          "type": "string",
+          "default": "../backend",
+          "description": "Path to Aura backend directory (relative to workspace root)"
         }
       }
     },
@@ -221,17 +222,20 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "echo \"No tests defined\""
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.74.0",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.10",
     "@types/node": "16.x",
+    "@types/vscode": "^1.74.0",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.2.0",
     "eslint": "^8.28.0",
     "glob": "^8.0.3",
-    "typescript": "^4.9.4",
-    "@vscode/test-electron": "^2.2.0"
+    "mocha": "^11.6.0",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
     "ws": "^8.14.2",

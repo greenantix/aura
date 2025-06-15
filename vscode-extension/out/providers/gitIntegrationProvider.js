@@ -189,8 +189,9 @@ ${changes.files_changed.map(f => `• ${f}`).join('\n')}
                     prompt: 'Describe the feature or change you\'re working on',
                     placeHolder: 'Add user authentication system'
                 });
-                if (!userInput)
+                if (!userInput) {
                     return;
+                }
                 description = userInput;
             }
             // Generate branch name
@@ -334,10 +335,11 @@ ${changes.files_changed.map(f => `• ${f}`).join('\n')}
                 case 'suggestBranch':
                     await this.suggestBranchName();
                     break;
-                case 'refresh':
+                case 'refresh': {
                     const newChanges = await this.analyzeCurrentChanges();
                     panel.webview.html = this.getGitPanelHtml(newChanges);
                     break;
+                }
             }
         });
     }

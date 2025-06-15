@@ -113,6 +113,11 @@ export declare class AuraConnection {
     private mapIssues;
     private generateSuggestions;
     private formatCommitMessage;
+    checkLLMStatus(): Promise<any>;
+    generateTests(filePath: string): Promise<string | null>;
+    optimizeCode(filePath: string, code: string): Promise<string | null>;
+    private formatTestSuite;
+    private applyRefactoringSuggestions;
     getStatus(): ConnectionStatus;
 }
 //# sourceMappingURL=connection.d.ts.map

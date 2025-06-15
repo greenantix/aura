@@ -108,6 +108,13 @@ class AuraExtension {
         this.disposables.push(vscode.commands.registerCommand('aura.generateCommit', () => {
             this.generateSemanticCommit();
         }));
+        // Connection management commands
+        this.disposables.push(vscode.commands.registerCommand('aura.reconnect', async () => {
+            await this.reconnectToBackend();
+        }));
+        this.disposables.push(vscode.commands.registerCommand('aura.showTroubleshooting', () => {
+            this.showTroubleshootingPanel();
+        }));
         // Enhanced Git commands
         this.disposables.push(vscode.commands.registerCommand('aura.git.generateCommit', () => {
             this.gitIntegrationProvider.generateCommitMessage();
@@ -146,6 +153,22 @@ class AuraExtension {
         }));
         this.disposables.push(vscode.commands.registerCommand('aura.refreshAnalysis', () => {
             this.codeAnalysisProvider.refresh();
+        }));
+        // Dashboard utility commands
+        this.disposables.push(vscode.commands.registerCommand('aura.checkLLMStatus', async () => {
+            this.checkLLMStatus();
+        }));
+        this.disposables.push(vscode.commands.registerCommand('aura.showIssues', () => {
+            this.showIssues();
+        }));
+        this.disposables.push(vscode.commands.registerCommand('aura.generateTests', () => {
+            this.generateTests();
+        }));
+        this.disposables.push(vscode.commands.registerCommand('aura.optimizeCode', () => {
+            this.optimizeCode();
+        }));
+        this.disposables.push(vscode.commands.registerCommand('aura.showSettings', () => {
+            vscode.commands.executeCommand('workbench.action.openSettings', 'aura');
         }));
         // Internal events
         this.disposables.push(vscode.commands.registerCommand('aura.analysisUpdated', (filePath, analysis) => {
@@ -329,17 +352,229 @@ class AuraExtension {
             }
             // Set context for views
             vscode.commands.executeCommand('setContext', 'aura.enabled', true);
-            // Connect to Aura system
-            await this.connection.connect();
-            // Show welcome message
-            this.notificationManager.showInfo('Aura - Level 9 Autonomous AI Coding Assistant activated');
-            this.logger.info('Aura extension activated successfully');
-            // Update status bar
+            // Update status bar immediately
             this.statusBar.show();
+            // Try to connect to Aura system
+            try {
+                await this.connection.connect();
+                this.notificationManager.showInfo('Aura - Level 9 Autonomous AI Coding Assistant activated');
+                this.logger.info('Aura extension activated successfully');
+            }
+            catch (connectionError) {
+                this.logger.warn('Backend connection failed, running in limited mode', connectionError);
+                // Show connection error with helpful actions
+                const action = await this.notificationManager.showWarning('Could not connect to Aura backend. Extension will run in limited mode.', 'Start Backend', 'Troubleshoot', 'Settings');
+                if (action === 'Start Backend') {
+                    this.startBackendService();
+                }
+                else if (action === 'Troubleshoot') {
+                    this.showTroubleshootingPanel();
+                }
+                else if (action === 'Settings') {
+                    vscode.commands.executeCommand('workbench.action.openSettings', 'aura');
+                }
+            }
         }
         catch (error) {
             this.logger.error('Failed to activate Aura extension', error);
-            this.notificationManager.showError(`Failed to connect to Aura: ${error}`);
+            this.notificationManager.showError(`Extension activation failed: ${error}`);
+        }
+    }
+    async checkLLMStatus() {
+        try {
+            this.statusBar.showActivity('Checking LLM status...');
+            // Try to get LLM status from backend
+            const status = await this.connection.checkLLMStatus();
+            if (status && status.available) {
+                this.notificationManager.showInfo(`LLM Provider: ${status.provider} (${status.models} models available)`);
+            }
+            else {
+                this.notificationManager.showWarning('LLM Provider: Not available. Check LM Studio or Ollama is running.');
+            }
+            this.statusBar.hideActivity();
+        }
+        catch (error) {
+            this.statusBar.hideActivity();
+            this.notificationManager.showError(`Failed to check LLM status: ${error}`);
+        }
+    }
+    showIssues() {
+        // Show problems panel
+        vscode.commands.executeCommand('workbench.action.problems.focus');
+        this.notificationManager.showInfo('Viewing code issues in Problems panel');
+    }
+    async generateTests() {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showErrorMessage('No active file to generate tests for');
+            return;
+        }
+        try {
+            this.statusBar.showActivity('Generating tests...');
+            const tests = await this.connection.generateTests(editor.document.uri.fsPath);
+            if (tests) {
+                // Create new test file
+                const testFileName = editor.document.fileName.replace(/\.(py|js|ts)$/, '.test.$1');
+                const testUri = vscode.Uri.file(testFileName);
+                const edit = new vscode.WorkspaceEdit();
+                edit.createFile(testUri, { ignoreIfExists: true });
+                edit.insert(testUri, new vscode.Position(0, 0), tests);
+                await vscode.workspace.applyEdit(edit);
+                await vscode.window.showTextDocument(testUri);
+                this.notificationManager.showInfo('Test file generated successfully!');
+            }
+            this.statusBar.hideActivity();
+        }
+        catch (error) {
+            this.statusBar.hideActivity();
+            this.notificationManager.showError(`Test generation failed: ${error}`);
+        }
+    }
+    async optimizeCode() {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showErrorMessage('No active file to optimize');
+            return;
+        }
+        try {
+            this.statusBar.showActivity('Optimizing code...');
+            const optimized = await this.connection.optimizeCode(editor.document.uri.fsPath, editor.document.getText());
+            if (optimized && optimized !== editor.document.getText()) {
+                // Show diff and let user approve changes
+                const action = await vscode.window.showInformationMessage('Code optimizations found. Apply changes?', 'Apply', 'Review Diff', 'Cancel');
+                if (action === 'Apply') {
+                    const edit = new vscode.WorkspaceEdit();
+                    edit.replace(editor.document.uri, new vscode.Range(0, 0, editor.document.lineCount, 0), optimized);
+                    await vscode.workspace.applyEdit(edit);
+                    this.notificationManager.showInfo('Code optimized successfully!');
+                }
+                else if (action === 'Review Diff') {
+                    // Open diff view
+                    const originalUri = vscode.Uri.parse(`untitled:original-${Date.now()}.py`);
+                    const optimizedUri = vscode.Uri.parse(`untitled:optimized-${Date.now()}.py`);
+                    await vscode.workspace.openTextDocument(originalUri).then(doc => {
+                        const edit = new vscode.WorkspaceEdit();
+                        edit.insert(originalUri, new vscode.Position(0, 0), editor.document.getText());
+                        return vscode.workspace.applyEdit(edit);
+                    });
+                    await vscode.workspace.openTextDocument(optimizedUri).then(doc => {
+                        const edit = new vscode.WorkspaceEdit();
+                        edit.insert(optimizedUri, new vscode.Position(0, 0), optimized);
+                        return vscode.workspace.applyEdit(edit);
+                    });
+                    vscode.commands.executeCommand('vscode.diff', originalUri, optimizedUri, 'Code Optimization');
+                }
+            }
+            else {
+                this.notificationManager.showInfo('No optimizations found for this code.');
+            }
+            this.statusBar.hideActivity();
+        }
+        catch (error) {
+            this.statusBar.hideActivity();
+            this.notificationManager.showError(`Code optimization failed: ${error}`);
+        }
+    }
+    async reconnectToBackend() {
+        try {
+            this.statusBar.updateConnectionStatus('connecting');
+            this.notificationManager.showInfo('Reconnecting to Aura backend...');
+            this.connection.disconnect();
+            await this.connection.connect();
+            this.notificationManager.showInfo('Successfully reconnected to Aura backend');
+        }
+        catch (error) {
+            this.logger.error('Failed to reconnect to backend', error);
+            this.notificationManager.showError(`Reconnection failed: ${error}`);
+        }
+    }
+    showTroubleshootingPanel() {
+        const panel = vscode.window.createWebviewPanel('auraTroubleshooting', 'Aura Troubleshooting', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = this.getTroubleshootingHtml();
+        panel.webview.onDidReceiveMessage(async (message) => {
+            switch (message.command) {
+                case 'startBackend':
+                    this.startBackendService();
+                    break;
+                case 'testConnection':
+                    await this.testBackendConnection();
+                    break;
+                case 'openSettings':
+                    vscode.commands.executeCommand('workbench.action.openSettings', 'aura');
+                    break;
+            }
+        });
+    }
+    getTroubleshootingHtml() {
+        return `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Aura Troubleshooting</title>
+                <style>
+                    body { font-family: var(--vscode-font-family); padding: 20px; color: var(--vscode-foreground); }
+                    .section { margin: 20px 0; padding: 15px; border: 1px solid var(--vscode-panel-border); border-radius: 5px; }
+                    button { background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; padding: 10px 15px; margin: 5px; border-radius: 3px; cursor: pointer; }
+                    button:hover { background: var(--vscode-button-hoverBackground); }
+                    .code { background: var(--vscode-textBlockQuote-background); padding: 10px; border-radius: 3px; font-family: monospace; }
+                </style>
+            </head>
+            <body>
+                <h1>🔧 Aura Troubleshooting</h1>
+                
+                <div class="section">
+                    <h2>Connection Issues</h2>
+                    <p>If Aura is not connecting, try these steps:</p>
+                    <ol>
+                        <li>Make sure the backend service is running</li>
+                        <li>Check if port 5559 is available</li>
+                        <li>Verify ZeroMQ is installed</li>
+                    </ol>
+                    <button onclick="sendMessage('testConnection')">Test Connection</button>
+                    <button onclick="sendMessage('startBackend')">Start Backend</button>
+                </div>
+
+                <div class="section">
+                    <h2>Manual Backend Startup</h2>
+                    <p>Run this command in the Aura backend directory:</p>
+                    <div class="code">python3 vscode_backend_service.py</div>
+                </div>
+
+                <div class="section">
+                    <h2>Configuration</h2>
+                    <p>Check your Aura extension settings:</p>
+                    <button onclick="sendMessage('openSettings')">Open Settings</button>
+                </div>
+
+                <script>
+                    const vscode = acquireVsCodeApi();
+                    function sendMessage(command) {
+                        vscode.postMessage({ command: command });
+                    }
+                </script>
+            </body>
+            </html>
+        `;
+    }
+    startBackendService() {
+        const terminal = vscode.window.createTerminal('Aura Backend');
+        const backendPath = vscode.workspace.getConfiguration('aura').get('backendPath', '../backend');
+        terminal.sendText(`cd ${backendPath} && python3 vscode_backend_service.py`);
+        terminal.show();
+        this.notificationManager.showInfo('Backend service started in terminal. Please check for any errors.');
+    }
+    async testBackendConnection() {
+        try {
+            const connected = await this.connection.healthCheck();
+            if (connected) {
+                this.notificationManager.showInfo('✅ Backend connection is working!');
+            }
+            else {
+                this.notificationManager.showWarning('❌ Backend connection failed. Check if the service is running.');
+            }
+        }
+        catch (error) {
+            this.notificationManager.showError(`Connection test failed: ${error}`);
         }
     }
     deactivate() {

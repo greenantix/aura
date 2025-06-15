@@ -21,8 +21,33 @@ from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
 
-from ..core import AuraModule, MessageType, aura_service
-from ..llm import LLMRequest, ModelCapability
+try:
+    from ..core import AuraModule, MessageType, aura_service
+    from ..llm import LLMRequest, ModelCapability
+except ImportError:
+    # Fallback for direct execution
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parent.parent))
+    
+    # Mock the core classes for testing
+    class AuraModule:
+        def __init__(self, name, config):
+            self.module_name = name
+            self.config = config
+            self.logger = logging.getLogger(f"aura.{name}")
+    
+    class MessageType:
+        COMMAND = "command"
+        RESPONSE = "response"
+    
+    def aura_service(name):
+        def decorator(cls):
+            return cls
+        return decorator
+    
+    # Import LLM classes directly
+    from llm.providers import LLMRequest, ModelCapability
 
 
 class CommitType(Enum):
@@ -369,6 +394,16 @@ class SemanticCommitGenerator(AuraModule):
                 self.logger.warning(f"Path {self.repo_path} is not a Git repository")
                 return False
             
+            # Get message bus from DI if available
+            from ..core import aura_di
+            try:
+                self.message_bus = aura_di.get_service('message_bus')
+                if self.message_bus:
+                    self.logger.info("Connected to message bus for LLM integration")
+            except Exception as e:
+                self.logger.warning(f"Could not connect to message bus: {e}")
+                self.message_bus = None
+            
             self.logger.info("Semantic Commit Generator initialized successfully")
             return True
             
@@ -706,8 +741,38 @@ Respond in JSON format:
                 payload={"command": "generate", "request": asdict(request)}
             )
             
-            # This would normally be sent through message bus
-            # For now, return rule-based as fallback
+            # Send message through message bus if available
+            if hasattr(self, 'message_bus') and self.message_bus:
+                try:
+                    response = await self.message_bus.send_message(llm_message)
+                    if response and response.payload.get('success'):
+                        llm_response_data = response.payload.get('response', {})
+                        
+                        if llm_response_data.get('content'):
+                            # Parse JSON response from LLM
+                            content = llm_response_data['content'].strip()
+                            # Extract JSON from potential markdown formatting
+                            if '```json' in content:
+                                content = content.split('```json')[1].split('```')[0].strip()
+                            elif '```' in content:
+                                content = content.split('```')[1].split('```')[0].strip()
+                            
+                            try:
+                                commit_data = json.loads(content)
+                                return SemanticCommit(
+                                    type=CommitType(commit_data.get('type', 'feat')),
+                                    scope=commit_data.get('scope'),
+                                    description=commit_data.get('description', ''),
+                                    body=commit_data.get('body'),
+                                    footer=None,
+                                    breaking_change=commit_data.get('breaking_change', False)
+                                )
+                            except (json.JSONDecodeError, ValueError) as e:
+                                self.logger.warning(f"Failed to parse LLM response: {e}")
+                                
+                except Exception as e:
+                    self.logger.error(f"Message bus communication error: {e}")
+            
             return None
             
         except Exception as e:
